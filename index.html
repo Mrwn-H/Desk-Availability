@@ -65,11 +65,10 @@
         <!-- Desks will be generated here -->
     </div>
 
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
-
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js"></script>
+    
+    <script>
         // Your web app's Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCy4FzQuIWzN4Ixds2icL-sB-POBNWPJyc",
@@ -80,20 +79,20 @@
             appId: "1:396655323171:web:a4c7874eafcf866a23a996",
             measurementId: "G-53EJKWR6HD"
         };
-
+    
         // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
-
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+    
         const desks = ["Person 1", "Person 2", "Person 3", "Person 4", "Person 5", 
-                    "Person 6", "Person 7", "Person 8", "Person 9", "Person 10"];
+                       "Person 6", "Person 7", "Person 8", "Person 9", "Person 10"];
         let currentDay = 'Monday';
-
+    
         function renderDesks(snapshot) {
             const container = document.getElementById('grid-container');
             container.innerHTML = '';
             const availability = snapshot.val() || {};
-
+    
             for (let i = 0; i < desks.length; i++) {
                 const deskElement = document.createElement('div');
                 const status = availability[i] || 'available';
@@ -103,24 +102,25 @@
                 container.appendChild(deskElement);
             }
         }
-
+    
         function toggleDesk(index) {
-            const deskRef = ref(database, `desks/${currentDay}/${index}`);
-            onValue(deskRef, (snapshot) => {
+            const deskRef = database.ref(`desks/${currentDay}/${index}`);
+            deskRef.once('value').then((snapshot) => {
                 const status = snapshot.val();
-                set(deskRef, status === 'available' ? 'unavailable' : 'available');
+                deskRef.set(status === 'available' ? 'unavailable' : 'available');
             });
         }
-
+    
         function changeDay(day) {
             currentDay = day;
-            const dayRef = ref(database, `desks/${currentDay}`);
-            onValue(dayRef, renderDesks);
+            const dayRef = database.ref(`desks/${currentDay}`);
+            dayRef.on('value', renderDesks);
         }
-
+    
         window.onload = function() {
             changeDay('Monday'); // Initial render for Monday
         };
     </script>
+    
 </body>
 </html>
