@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desk Availability</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .desk {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+            font-size: 14px;
+            text-align: center;
+        }
+        .available {
+            background-color: green;
+        }
+        .unavailable {
+            background-color: red;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+        .day-buttons {
+            margin-bottom: 20px;
+        }
+        .day-buttons button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Desk Availability</h1>
+    
+    <div class="day-buttons">
+        <button onclick="changeDay('Monday')">Monday</button>
+        <button onclick="changeDay('Tuesday')">Tuesday</button>
+        <button onclick="changeDay('Wednesday')">Wednesday</button>
+        <button onclick="changeDay('Thursday')">Thursday</button>
+        <button onclick="changeDay('Friday')">Friday</button>
+    </div>
+
+    <div id="grid-container" class="grid-container">
+        <!-- Desks will be generated here -->
+    </div>
+
+    <script>
+        const desks = ["Person 1", "Person 2", "Person 3", "Person 4", "Person 5", 
+                       "Person 6", "Person 7", "Person 8", "Person 9", "Person 10"];
+
+        const availability = {
+            "Monday": Array(desks.length).fill('available'),
+            "Tuesday": Array(desks.length).fill('available'),
+            "Wednesday": Array(desks.length).fill('available'),
+            "Thursday": Array(desks.length).fill('available'),
+            "Friday": Array(desks.length).fill('available')
+        };
+
+        let currentDay = 'Monday';
+
+        function renderDesks() {
+            const container = document.getElementById('grid-container');
+            container.innerHTML = '';
+            for (let i = 0; i < desks.length; i++) {
+                const deskElement = document.createElement('div');
+                deskElement.className = `desk ${availability[currentDay][i]}`;
+                deskElement.textContent = desks[i];
+                deskElement.onclick = () => toggleDesk(i);
+                container.appendChild(deskElement);
+            }
+        }
+
+        function toggleDesk(index) {
+            if (availability[currentDay][index] === 'available') {
+                availability[currentDay][index] = 'unavailable';
+            } else {
+                availability[currentDay][index] = 'available';
+            }
+            renderDesks();
+        }
+
+        function changeDay(day) {
+            currentDay = day;
+            renderDesks();
+        }
+
+        window.onload = function() {
+            renderDesks(); // Initial render for Monday
+        };
+    </script>
+</body>
+</html>
